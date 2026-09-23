@@ -417,8 +417,11 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
         }
     };
 
-    var LANG_KEY = 'openfire-hub-lang';
-    var THEME_KEY = 'openfire-hub-theme';
+    /* Le stesse chiavi del flasher, della Web App e della pagina degli strumenti:
+       stanno tutti sullo stesso dominio, quindi tema e lingua scelti su una qualsiasi
+       delle quattro pagine valgono anche sulle altre tre. */
+    var LANG_KEY = 'of_lang';
+    var THEME_KEY = 'of_theme';
     var THEMES = ['system', 'light', 'dark'];
     var SVG = 'http://www.w3.org/2000/svg';
 
