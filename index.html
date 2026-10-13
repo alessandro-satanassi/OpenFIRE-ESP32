@@ -230,6 +230,14 @@ main { flex: 1; width: 100%; max-width: 920px; margin: 0 auto; padding: 0 16px 4
 .card:hover, .card:focus-visible { transform: translateY(-3px); box-shadow: var(--card-lift); border-color: var(--accent); }
 .card-game { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 30%) minmax(0, 1fr); gap: 20px; align-items: center; }
 .card-game-copy { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+/* Nel riquadro del gioco i paragrafi sono piu' di uno: non devono allungarsi. */
+.card-game-copy p { flex: none; }
+.card-game-copy p a { color: var(--link); font-weight: 600; text-decoration: none; }
+.card-game-copy p a:hover { text-decoration: underline; }
+.card-game-copy p strong { color: var(--text); }
+.card-preview-link { display: block; border-radius: 8px; }
+a.card-go { text-decoration: none; align-self: flex-start; }
+a.card-go:hover .icon { transform: translateX(3px); }
 .card-preview {
     display: block; width: 100%; height: auto; aspect-ratio: 16 / 9;
     border: 1px solid var(--border); border-radius: 8px;
@@ -331,6 +339,7 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
     var BASE = 'https://alessandro-satanassi.github.io/';
     var REPO = 'https://github.com/alessandro-satanassi/OpenFIRE-Firmware-ESP32';
     var YOUTUBE = 'https://www.youtube.com/@OpenFIREesp32';
+    var ITCH = 'https://alessandro-satanassi.itch.io/openfire-shootinggallery';
 
     // I riquadri. "lang: true" = gli passiamo la lingua scelta qui,
     // così l'altro sito si apre nella stessa lingua.
@@ -372,6 +381,12 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
             gamePreview: 'Game preview with moving fairground targets, spinning wheels and cans.',
             gameTitle: 'OpenFIRE Shooting Gallery',
             gameText: 'A fairground shooting gallery with moving targets and surprise duels.',
+            gameDesktopBefore: 'Download the desktop version for Windows, Linux or macOS from ',
+            gameDesktopLink: 'itch.io',
+            gameDesktopAfter: '.',
+            gameWebBefore: 'Or try it right here in your browser, with ',
+            gameWebBold: 'lower performance',
+            gameWebAfter: ': the web version may slow down at times.',
 
             tagline: 'Light gun firmware for ESP32-S3 boards, with a wireless link, and everything you need to install and set it up from the browser.',
 
@@ -410,6 +425,12 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
             gamePreview: 'Anteprima del gioco con bersagli da luna park, ruote e lattine.',
             gameTitle: 'OpenFIRE Shooting Gallery',
             gameText: 'Il tiro a segno del luna park, con bersagli mobili e duelli a sorpresa.',
+            gameDesktopBefore: 'Puoi scaricare la versione desktop per Windows, Linux o macOS da ',
+            gameDesktopLink: 'itch.io',
+            gameDesktopAfter: '.',
+            gameWebBefore: 'Se vuoi, puoi provarlo anche qui nel browser, con ',
+            gameWebBold: 'prestazioni minori',
+            gameWebAfter: ': nella versione web possono esserci rallentamenti.',
 
             tagline: 'Firmware per lightgun su schede ESP32-S3, con collegamento senza fili, e tutto il necessario per installarlo e configurarlo dal browser.',
 
@@ -580,40 +601,83 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
     }
 
     // ── Riquadri e piede ────────────────────────────────────────────────────
+    function cardTop(card) {
+        var top = el('div', 'card-top');
+        var ic = el('span', 'card-icon');
+        ic.appendChild(icon(card.icon));
+        top.appendChild(ic);
+        top.appendChild(el('h2', null, t(card.key + 'Title')));
+        return top;
+    }
+
+    function cardGo(tag, card) {
+        var go = el(tag, 'card-go');
+        go.appendChild(el('span', null, t(card.action || 'open')));
+        go.appendChild(icon('arrow'));
+        return go;
+    }
+
+    /* Il riquadro del gioco contiene anche il link a itch.io: un link dentro un
+       altro link non e' HTML valido, quindi qui il riquadro e' un div e i link
+       sono l'anteprima, itch.io e "Gioca nel browser". */
+    function buildGameCard(card) {
+        var box = el('div', 'card card-game');
+
+        var shot = el('a', 'card-preview-link');
+        shot.href = card.url;
+        shot.tabIndex = -1; // stessa destinazione di "Gioca nel browser"
+        var preview = el('img', 'card-preview');
+        preview.src = './images/shooting-gallery-preview.png';
+        preview.alt = t('gamePreview');
+        preview.width = 1920;
+        preview.height = 1080;
+        preview.loading = 'lazy';
+        preview.decoding = 'async';
+        shot.appendChild(preview);
+        box.appendChild(shot);
+
+        var copy = el('div', 'card-game-copy');
+        copy.appendChild(cardTop(card));
+        copy.appendChild(el('p', null, t('gameText')));
+
+        var desktop = el('p');
+        desktop.appendChild(document.createTextNode(t('gameDesktopBefore')));
+        var itch = el('a', null, t('gameDesktopLink'));
+        itch.href = ITCH;
+        itch.target = '_blank';
+        itch.rel = 'noopener';
+        desktop.appendChild(itch);
+        desktop.appendChild(document.createTextNode(t('gameDesktopAfter')));
+        copy.appendChild(desktop);
+
+        var web = el('p');
+        web.appendChild(document.createTextNode(t('gameWebBefore')));
+        web.appendChild(el('strong', null, t('gameWebBold')));
+        web.appendChild(document.createTextNode(t('gameWebAfter')));
+        copy.appendChild(web);
+
+        var go = cardGo('a', card);
+        go.href = card.url;
+        copy.appendChild(go);
+
+        box.appendChild(copy);
+        return box;
+    }
+
     function buildCards() {
         var box = document.getElementById('cards');
         box.textContent = '';
         CARDS.forEach(function (card) {
-            var a = document.createElement('a');
-            a.className = 'card' + (card.key === 'game' ? ' card-game' : '');
-            a.href = card.lang ? card.url + '?lang=' + lang : card.url;
-
-            var top = el('div', 'card-top');
-            var ic = el('span', 'card-icon');
-            ic.appendChild(icon(card.icon));
-            top.appendChild(ic);
-            top.appendChild(el('h2', null, t(card.key + 'Title')));
-
-            var go = el('span', 'card-go');
-            go.appendChild(el('span', null, t(card.action || 'open')));
-            go.appendChild(icon('arrow'));
-
-            var content = card.key === 'game' ? el('div', 'card-game-copy') : a;
-            if (card.key === 'game') top.removeChild(ic);
-            content.appendChild(top);
             if (card.key === 'game') {
-                var preview = el('img', 'card-preview');
-                preview.src = './images/shooting-gallery-preview.png';
-                preview.alt = t('gamePreview');
-                preview.width = 1920;
-                preview.height = 1080;
-                preview.loading = 'lazy';
-                preview.decoding = 'async';
-                a.appendChild(preview);
+                box.appendChild(buildGameCard(card));
+                return;
             }
-            content.appendChild(el('p', null, t(card.key + 'Text')));
-            content.appendChild(go);
-            if (content !== a) a.appendChild(content);
+            var a = document.createElement('a');
+            a.className = 'card';
+            a.href = card.lang ? card.url + '?lang=' + lang : card.url;
+            a.appendChild(cardTop(card));
+            a.appendChild(el('p', null, t(card.key + 'Text')));
+            a.appendChild(cardGo('span', card));
             box.appendChild(a);
         });
     }
