@@ -348,8 +348,7 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
         { key: 'webapp',  url: BASE + 'OpenFIRE-ESP32-WebApp/',     lang: true, icon: 'sliders' },
         { key: 'tools',   url: BASE + 'OpenFIRE-ESP32-Tools/',      lang: true, icon: 'tools' },
         { key: 'picon',   url: BASE + 'OpenFIRE-PICON-AS-ESP32/',   lang: true, icon: 'target' },
-        // Link relativo: funziona anche quando l'HUB è pubblicato in una sottocartella.
-        { key: 'game',    url: './game/index.html', lang: false, icon: 'game', action: 'play' }
+        { key: 'game',    url: ITCH, lang: false, icon: 'game', action: 'play' }
     ];
 
     var ICONS = {
@@ -625,6 +624,8 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
 
         var shot = el('a', 'card-preview-link');
         shot.href = card.url;
+        shot.target = '_blank';
+        shot.rel = 'noopener';
         shot.tabIndex = -1; // stessa destinazione di "Gioca nel browser"
         var preview = el('img', 'card-preview');
         preview.src = './images/shooting-gallery-preview.png';
@@ -658,6 +659,8 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: 
 
         var go = cardGo('a', card);
         go.href = card.url;
+        go.target = '_blank';
+        go.rel = 'noopener';
         copy.appendChild(go);
 
         box.appendChild(copy);
