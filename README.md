@@ -37,3 +37,21 @@ Per la configurazione offline tieni premuto **B** all'avvio della lightgun per c
 Tieni premuti **Grilletto + A** all'avvio per circa **2 secondi** per predisporre una pistola che esegue già la 7.0.0 al flashing tramite la propria porta USB OTG. Per una scheda vuota o il recupero usa la procedura BOOT/RESET fisica.
 
 Passando dalla 6.2.1 è consigliata un'installazione pulita: annota prima le impostazioni, poi configura e calibra nuovamente. Usa la stessa release per pistola, dongle e pedale. Le App di configurazione dei firmware precedenti non funzionano con il nuovo protocollo.
+
+## Shooting Gallery — web game / gioco web
+
+### English
+
+The home page includes an **OpenFIRE Shooting Gallery** panel that opens `./game/index.html` in the same tab. The game files live entirely in `game/`; updating them does not require editing the home page.
+
+To publish a new game version, manually copy **all the contents** of `F:\OpenFIRE-ShootingGallery\release\web\` into this repository's `game/` directory, preserving filenames and any subdirectories. Keep `index.html` directly inside `game/` (not `game/web/`). Deploy the matching HTML, JavaScript, WASM, PCK and other exported files together. No automatic copying or updates are configured.
+
+Test the game through a local HTTP server or the published HTTPS site; opening the exported HTML by double-clicking is not sufficient. The hub panel is translated into Italian and English; the game keeps its own language selection via **L**.
+
+### Italiano
+
+La home include il pannello **OpenFIRE Shooting Gallery**, che apre `./game/index.html` nella stessa scheda. Tutti i file del gioco risiedono in `game/`; aggiornarli non richiede modifiche alla home.
+
+Per pubblicare una nuova versione del gioco, copia manualmente **tutto il contenuto** di `F:\OpenFIRE-ShootingGallery\release\web\` nella cartella `game/` di questo repository, mantenendo nomi e sottocartelle. Il file `index.html` deve trovarsi direttamente in `game/` (non in `game/web/`). Pubblica insieme HTML, JavaScript, WASM, PCK e gli altri file della stessa esportazione. Non sono configurati copie o aggiornamenti automatici.
+
+Prova il gioco tramite un server HTTP locale oppure sul sito HTTPS pubblicato: il doppio clic sull'HTML esportato non è sufficiente. Il pannello dell'HUB è tradotto in italiano e inglese; il gioco mantiene la propria selezione della lingua con **L**.
